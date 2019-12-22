@@ -215,6 +215,8 @@ double Equation::equateStringTrig(std::string trigFxn, double num)
     if (trigFxn == "sin") return sin(num);
     if (trigFxn == "cos") return cos(num);
     if (trigFxn == "tan") return tan(num);
+    if (trigFxn == "tan") return tan(num);
+    if (trigFxn == "tan") return tan(num);
 }
 
 // find the index of the first letter of the trig fxn. If not, return -1
