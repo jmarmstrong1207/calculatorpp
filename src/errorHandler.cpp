@@ -1,8 +1,15 @@
 #include <iostream>
+#include "errorHandler.h"
+#include "equation.h"
 
-bool hasInvalidCharacters(std::string input)
+EquationErrorFinder::EquationErrorFinder(std::string x)
 {
-    for (char x : input)
+    equation = x;
+}
+
+bool EquationErrorFinder::hasInvalidCharacters()
+{
+    for (char x : equation)
     {
         if ( (!isdigit(x) && x != '.') && (x != '*' && x != '/' && x != '+' && x != '-')  && x != ' ' && x != '(' && x != ')') return true;
     }
@@ -10,10 +17,10 @@ bool hasInvalidCharacters(std::string input)
 }
 
 // Returns number of instances of a character in a string
-int getInstances(std::string input, char x)
+int EquationErrorFinder::getNumberOfInstances(char x)
 {
     int sum = 0;
-    for (char i : input)
+    for (char i : equation)
     {
         if (i == x)
         {
@@ -22,18 +29,33 @@ int getInstances(std::string input, char x)
     }
     return sum;
 }
+
 // Counts # of left and right parenthesis. If not equal, there are errors
-bool openParentheses(std::string input)
+bool EquationErrorFinder::hasOpenParentheses()
 {
-    return getInstances(input, '(') != getInstances(input, ')');
+    return getNumberOfInstances('(') != getNumberOfInstances(')');
 }
 
-bool emptyParentheses(std::string input)
+bool EquationErrorFinder::hasEmptyParentheses()
 {
-    return static_cast<int>(input.size()) == getInstances(input, '(') + getInstances(input, ')');
+    return static_cast<int>(equation.size()) == getNumberOfInstances('(') + getNumberOfInstances(')');
 }
 
-bool hasErrors(std::string input)
+// Makes it easier to parse the equation for errors
+void EquationErrorFinder::removetrigFxns()
 {
-    return hasInvalidCharacters(input) || openParentheses(input) || emptyParentheses(input);
+    unsigned int firstIndex = Equation::locateTrigIndex(equation);
+    unsigned int lastIndex = Equation::getNextCorrespondingParenthesisIndex(equation, firstIndex + 3);
+
+    if (firstIndex != -1 && firstIndex != -1)
+    {
+        equation.erase(firstIndex, lastIndex - firstIndex + 1);
+        equation.insert(firstIndex, "0");
+    }
+}
+
+bool EquationErrorFinder::hasErrors()
+{
+    removetrigFxns();
+    return hasInvalidCharacters() || hasOpenParentheses() || hasEmptyParentheses();
 }
