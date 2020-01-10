@@ -1,5 +1,4 @@
 #include <iostream>
-#include "errorHandler.h"
 #include "equation.h"
 #include <unistd.h>
 
