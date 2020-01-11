@@ -8,7 +8,7 @@ Equation::Equation(std::string x)
 
     removeWhitespace();
     furthestLeftPIndex = -1;
-    furthestLeftPIndex = -1;
+    furthestRightPIndex = -1;
 
     firstTrigIndex = locateTrigIndex(equation);
 }
