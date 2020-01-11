@@ -31,9 +31,7 @@ private:
 
     void largestParenthesisEquate();
 
-
     double equateStringTrig(std::string trigFxn, double num);
-
 
     void equateFirstTrig();
 
@@ -46,5 +44,4 @@ public:
     static int getNextCorrespondingParenthesisIndex(std::string equation, int leftPIndex);
     static int getNextRightParenthesisIndex(std::string equation, int leftPIndex);
 };
-
 #endif // EQUATION_H
