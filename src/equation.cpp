@@ -113,11 +113,11 @@ void Equation::addTogether(int operatorIndex, char op)
     rightOperand = std::stod(equation.substr(rightOperandLeftIndex, rightOperandRightIndex - rightOperandLeftIndex + 1));
 
     equation.erase(leftOperandLeftIndex, rightOperandRightIndex - leftOperandLeftIndex + 1);
-    if 		(op == '^') equation.insert(leftOperandLeftIndex, std::to_string(pow(leftOperand, rightOperand)));
+    if (op == '^') equation.insert(leftOperandLeftIndex, std::to_string(pow(leftOperand, rightOperand)));
     else if	(op == '*') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand * rightOperand));
     else if (op == '/') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand / rightOperand));
     else if (op == '+') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand + rightOperand));
-    else 				equation.insert(leftOperandLeftIndex, std::to_string(leftOperand - rightOperand));
+    else equation.insert(leftOperandLeftIndex, std::to_string(leftOperand - rightOperand));
 }
 
 // determine if string is just a double
