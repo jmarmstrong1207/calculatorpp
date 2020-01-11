@@ -114,7 +114,7 @@ void Equation::addTogether(int operatorIndex, char op)
 
     equation.erase(leftOperandLeftIndex, rightOperandRightIndex - leftOperandLeftIndex + 1);
     if (op == '^') equation.insert(leftOperandLeftIndex, std::to_string(pow(leftOperand, rightOperand)));
-    else if	(op == '*') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand * rightOperand));
+    else if (op == '*') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand * rightOperand));
     else if (op == '/') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand / rightOperand));
     else if (op == '+') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand + rightOperand));
     else equation.insert(leftOperandLeftIndex, std::to_string(leftOperand - rightOperand));
