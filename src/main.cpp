@@ -12,7 +12,14 @@ int main()
       std::cout << std::endl;
 
       Equation x(input);
-      std::cout << "Answer: " << x.calculate() << std::endl;
+      try
+      {
+        std::cout << "Answer: " << x.calculate() << std::endl;
+      }
+      catch (std::invalid_argument)
+      {
+        std::cout << "The input is invalid.";
+      }
 
 
     return 0;
