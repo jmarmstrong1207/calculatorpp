@@ -294,7 +294,7 @@ double Equation::calculate()
 
     furthestLeftPIndex = findFirstSpecificOperator('(');
     furthestRightPIndex = findFurthestRightParenthesisIndex();
-    if (!isNumber()) if (furthestLeftPIndex != -1) largestParenthesisEquate();
+    if (!isNumber() && furthestLeftPIndex != -1) largestParenthesisEquate();
     if (!isNumber()) equateAllCertainOperators('^');
     if (!isNumber()) equateAllCertainOperators('*');
     if (!isNumber()) equateAllCertainOperators('/');
