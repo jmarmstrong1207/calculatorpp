@@ -54,7 +54,7 @@ void Equation::getLeftAndRightIndexOfOperand(int operatorIndex, int &leftIndex, 
     int i = 1;
     if (side == 'l')
     {
-        while (static_cast<int>(operatorIndex - i) >= 0 && (isdigit(equation[operatorIndex - i]) || equation[operatorIndex - i] == '.'))
+        while (operatorIndex - i >= 0 && (isdigit(equation[operatorIndex - i]) || equation[operatorIndex - i] == '.'))
         {
             i++;
         }
@@ -62,7 +62,7 @@ void Equation::getLeftAndRightIndexOfOperand(int operatorIndex, int &leftIndex, 
         // There is only a check for the left side, because equations can start with a negative (e.g. -1 + 2),
         // and we need to know that so we can tell this program about it. The right side doesnt have this check
         // because "1 + 2-" is not valid, so the program will naturally crash trying to convert it to a double.
-        if (static_cast<int>(operatorIndex - i) == -1 && equation[0] == '-')
+        if (operatorIndex - i == -1 && equation[0] == '-')
         {
             leftIndex = -1;
             rightIndex = -1;
@@ -223,7 +223,7 @@ int Equation::getNextCorrespondingParenthesisIndex(std::string equation, int lef
 // find the index of the first letter of the trig fxn. If not, return -1
 int Equation::locateTrigIndex(std::string equation)
 {
-    for (int i = 0; i < static_cast<int>(equation.size()) - 2; i++)
+    for (int i = 0; i < equation.size() - 2; i++)
     {
         std::string substring = equation.substr(i, 3);
         if (substring == "sin" || substring == "cos" || substring == "tan")
@@ -237,7 +237,7 @@ int Equation::locateTrigIndex(std::string equation)
 // Gets the next ")"
 int Equation::getNextRightParenthesisIndex(std::string equation, int leftPIndex)
 {
-    for (int i = leftPIndex; i < static_cast<int>(equation.size()) - 2; i++)
+    for (int i = leftPIndex; i < equation.size() - 2; i++)
     {
         if (equation[i] == ')') return i;
     }
