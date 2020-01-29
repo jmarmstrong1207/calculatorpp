@@ -15,13 +15,13 @@ private:
 
     int findFirstSpecificOperator(char op);
 
-    void getLeftAndRightIndex(int operatorIndex, int &leftIndex, int &rightIndex, char side);
+    void getLeftAndRightIndexOfOperand(int operatorIndex, int &leftIndex, int &rightIndex, char side);
 
-    void addTogether(int operatorIndex, char op);
+    void addOperandsTogether(int operatorIndex, char op);
 
     bool isNumber();
 
-    void equate(char op);
+    void equateAllCertainOperators(char op);
 
     int findFurthestRightParenthesisIndex();
 
@@ -31,7 +31,7 @@ private:
 
     void largestParenthesisEquate();
 
-    double equateStringTrig(std::string trigFxn, double num);
+    double determineTrigFxnAndEquate(std::string trigFxn, double num);
 
     void equateFirstTrig();
 

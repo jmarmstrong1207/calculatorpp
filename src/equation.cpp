@@ -10,9 +10,11 @@ Equation::Equation(std::string x)
     furthestLeftPIndex = -1;
     furthestRightPIndex = -1;
 
+	// This is used to calculate and simplify the first trig fxn from the right
     firstTrigIndex = locateTrigIndex(equation);
 }
 
+// Remove whitespace from equation to simplify parsing
 void Equation::removeWhitespace()
 {
     for (int i = 0; i < equation.length(); i++)
@@ -24,7 +26,7 @@ void Equation::removeWhitespace()
     }
 }
 
-// finds specific operators in a vector of all of the operators in the equation, then places them into another vector
+// finds the first operator (given by the parameter) from the left
 int Equation::findFirstSpecificOperator(char op)
 {
     int specificOperatorIndex = 0;
@@ -46,7 +48,8 @@ int Equation::findFirstSpecificOperator(char op)
 }
 
 // Gets left or right operand's beginning and last index, depending whether side is 'l' or 'r'
-void Equation::getLeftAndRightIndex(int operatorIndex, int &leftIndex, int &rightIndex, char side)
+// Input leftIndex and rightIndex so that it gets the left and right index of the operand
+void Equation::getLeftAndRightIndexOfOperand(int operatorIndex, int &leftIndex, int &rightIndex, char side)
 {
     int i = 1;
     if (side == 'l')
@@ -86,32 +89,40 @@ void Equation::getLeftAndRightIndex(int operatorIndex, int &leftIndex, int &righ
 }
 
 // adds operands of a single and specific operator, then replaces the operation with the answer (e.g. "5 * 2 * 3 - 2" -> "10 * 3 - 2")
-void Equation::addTogether(int operatorIndex, char op)
+void Equation::addOperandsTogether(int operatorIndex, char op)
 {
+
+	// Indices of left operand
     int leftOperandLeftIndex = 0;
     int leftOperandRightIndex = 0;
-    getLeftAndRightIndex(operatorIndex, leftOperandLeftIndex, leftOperandRightIndex, 'l');
+    getLeftAndRightIndexOfOperand(operatorIndex, leftOperandLeftIndex, leftOperandRightIndex, 'l');
 
+	// Indices of right operand
     int rightOperandLeftIndex = 0;
     int rightOperandRightIndex = 0;
-    getLeftAndRightIndex(operatorIndex, rightOperandLeftIndex, rightOperandRightIndex, 'r');
+    getLeftAndRightIndexOfOperand(operatorIndex, rightOperandLeftIndex, rightOperandRightIndex, 'r');
 
 
     double leftOperand = 0;
     double rightOperand = 0;
 
-    // If there is no left operand, we will assume it is "-x + y". If it's something like "+x +y", it'll naturally crash.
+    // If there is no left operand, we will assume it is "-x + y". If it's something like "+x +y", it'll naturally crash
+	// with an invalid argument error.
     if (leftOperandLeftIndex == -1)
     {
-        // This turns the left operand into the right operand, including the negative
+        // This turns the left operand indices into the right operand indices, including the negative
         leftOperandLeftIndex = rightOperandLeftIndex - 1;
         leftOperandRightIndex = rightOperandRightIndex;
 
-        getLeftAndRightIndex(leftOperandRightIndex + 1, rightOperandLeftIndex, rightOperandRightIndex, 'r');
+		// From then, it changes the right operand indices to the next operand indices right of the now-updated
+		// left operand indices
+        getLeftAndRightIndexOfOperand(leftOperandRightIndex + 1, rightOperandLeftIndex, rightOperandRightIndex, 'r');
     }
+
     leftOperand = std::stod(equation.substr(leftOperandLeftIndex, leftOperandRightIndex - leftOperandLeftIndex + 1));
     rightOperand = std::stod(equation.substr(rightOperandLeftIndex, rightOperandRightIndex - rightOperandLeftIndex + 1));
 
+	// Replace the operation with the answer in the entire equation string
     equation.erase(leftOperandLeftIndex, rightOperandRightIndex - leftOperandLeftIndex + 1);
     if (op == '^') equation.insert(leftOperandLeftIndex, std::to_string(pow(leftOperand, rightOperand)));
     else if (op == '*') equation.insert(leftOperandLeftIndex, std::to_string(leftOperand * rightOperand));
@@ -120,7 +131,7 @@ void Equation::addTogether(int operatorIndex, char op)
     else equation.insert(leftOperandLeftIndex, std::to_string(leftOperand - rightOperand));
 }
 
-// determine if string is just a double
+// Determine if string is just a double
 bool Equation::isNumber()
 {
     for (int i = 0; i < equation.size(); i++)
@@ -135,7 +146,7 @@ bool Equation::isNumber()
 
 // Solves the equation by going through only one operator type, and simplifying the result of each operation of that type to a number.
 // (e.g, op = '*' and equation = "5 * 2 * 3 - 2". input becomes "30 - 2"). It doesn't do subtraction, only multiplication.
-void Equation::equate(char op)
+void Equation::equateAllCertainOperators(char op)
 {
     int index = 0;
 
@@ -145,7 +156,7 @@ void Equation::equate(char op)
     {
         index = findFirstSpecificOperator(op);
 
-        if (index != -1) addTogether(index, op);
+        if (index != -1) addOperandsTogether(index, op);
         else keepGoing = false;
     }
 }
@@ -186,7 +197,7 @@ void Equation::largestParenthesisEquate()
     replaceLargestParenthesisEquation(equationAnswer);
 }
 
-
+// From a given "("'s index given from leftPIndex, return the ")" that corresponds to it
 int Equation::getNextCorrespondingParenthesisIndex(std::string equation, int leftPIndex)
 {
     if (leftPIndex >= 0)
@@ -209,16 +220,6 @@ int Equation::getNextCorrespondingParenthesisIndex(std::string equation, int lef
     return -1;
 }
 
-
-double Equation::equateStringTrig(std::string trigFxn, double num)
-{
-    if (trigFxn == "sin") return sin(num);
-    if (trigFxn == "cos") return cos(num);
-    if (trigFxn == "tan") return tan(num);
-    if (trigFxn == "tan") return tan(num);
-    if (trigFxn == "tan") return tan(num);
-}
-
 // find the index of the first letter of the trig fxn. If not, return -1
 int Equation::locateTrigIndex(std::string equation)
 {
@@ -233,6 +234,7 @@ int Equation::locateTrigIndex(std::string equation)
     return -1;
 }
 
+// Gets the next ")"
 int Equation::getNextRightParenthesisIndex(std::string equation, int leftPIndex)
 {
     for (int i = leftPIndex; i < static_cast<int>(equation.size()) - 2; i++)
@@ -241,23 +243,40 @@ int Equation::getNextRightParenthesisIndex(std::string equation, int leftPIndex)
     }
     return -1;
 }
-// Simplifies trig functions like sin(5)
+
+// Helper function for equateFirstTrig()
+double Equation::determineTrigFxnAndEquate(std::string trigFxn, double num)
+{
+    if (trigFxn == "sin") return sin(num);
+    if (trigFxn == "cos") return cos(num);
+    if (trigFxn == "tan") return tan(num);
+    if (trigFxn == "tan") return tan(num);
+    if (trigFxn == "tan") return tan(num);
+    else throw std::invalid_argument("Though it is unlikely you may have gotten"
+                                     "an error from determineTrigFxnAndEquate(),"
+                                     "you have.");
+}
+
+// Simplifies trig functions like sin(5), starting with the first trig from the left
 void Equation::equateFirstTrig()
 {
     int leftPIndex = firstTrigIndex + 3;
     int rightPIndex = Equation::getNextCorrespondingParenthesisIndex(equation, leftPIndex);
 
-    // e.g. "sin"
+    // gets start & end index of number in parenthesis
     int beginningOfNum = leftPIndex + 1;
     int endOfNum = rightPIndex - 1;
 
+	// This is the name of the trig function e.g. "tan"
     std::string trigFxn = equation.substr(firstTrigIndex, 3);
 
     Equation inside(equation.substr(beginningOfNum, endOfNum - beginningOfNum + 1));
 
+	// Calculates the equation (if any) inside the parenthesis of the trig fxn
     double insideAns = inside.calculate();
 
-    std::string ans = std::to_string(equateStringTrig(trigFxn, insideAns));
+	// Replaces trig fxn with its simplified answer
+    std::string ans = std::to_string(determineTrigFxnAndEquate(trigFxn, insideAns));
     equation.erase(firstTrigIndex, rightPIndex - firstTrigIndex + 1);
     equation.insert(firstTrigIndex, ans);
 }
@@ -276,10 +295,10 @@ double Equation::calculate()
     furthestLeftPIndex = findFirstSpecificOperator('(');
     furthestRightPIndex = findFurthestRightParenthesisIndex();
     if (!isNumber()) if (furthestLeftPIndex != -1) largestParenthesisEquate();
-    if (!isNumber()) equate('^');
-    if (!isNumber()) equate('*');
-    if (!isNumber()) equate('/');
-    if (!isNumber()) equate('+');
-    if (!isNumber()) equate('-');
+    if (!isNumber()) equateAllCertainOperators('^');
+    if (!isNumber()) equateAllCertainOperators('*');
+    if (!isNumber()) equateAllCertainOperators('/');
+    if (!isNumber()) equateAllCertainOperators('+');
+    if (!isNumber()) equateAllCertainOperators('-');
     return stod(equation);
 }
