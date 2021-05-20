@@ -281,6 +281,92 @@ void Equation::equateFirstTrig()
     equation.insert(firstTrigIndex, ans);
 }
 
+// Finds first multiplication/division operator
+void Equation::findFirstMDOperator(int returned[2])
+{
+    int index = 0;
+    char op = '\0';
+    for ( int i = 0; i < equation.length(); i++)
+    {
+        if (equation[i] == '*' || equation[i] == '/')
+        {
+            index = i;
+            op = equation[i];
+            break;
+        }
+
+        else if (i == equation.length() - 1)
+        {
+            index = -1;
+        }
+    }
+
+    returned[0] = index;
+    returned[1] = op;
+
+}
+
+void Equation::findFirstADOperator(int returned[2])
+{
+    int index = 0;
+    char op = '\0';
+    for ( int i = 0; i < equation.length(); i++)
+    {
+        if (equation[i] == '+' || equation[i] == '-')
+        {
+            index = i;
+            op = equation[i];
+            break;
+        }
+
+        else if (i == equation.length() - 1)
+        {
+            index = -1;
+        }
+    }
+
+    returned[0] = index;
+    returned[1] = op;
+}
+
+// Equates all of them from left to right
+void Equation::equateAllMultiplicationAndDivision()
+{
+    int index = 0;
+
+    bool keepGoing = true;
+
+    while (keepGoing)
+    {
+        int returned[2]; findFirstMDOperator(returned);
+        index = returned[0];
+        char op = returned[1];
+
+
+        if (index != -1) addOperandsTogether(index, op);
+        else keepGoing = false;
+    }
+
+}
+
+void Equation::equateAllAdditionAndSubtraction()
+{
+    int index = 0;
+
+    bool keepGoing = true;
+
+    while (keepGoing)
+    {
+        int returned[2]; findFirstADOperator(returned);
+        index = returned[0];
+        char op = returned[1];
+
+
+        if (index != -1) addOperandsTogether(index, op);
+        else keepGoing = false;
+    }
+}
+
 // It starts from the first multiplication operator from the left, then multiplies its operands. It repeats for the 2nd, 3rd, etc.
 // It does the same thing for the other operators.
 double Equation::calculate()
@@ -296,9 +382,7 @@ double Equation::calculate()
     furthestRightPIndex = findFurthestRightParenthesisIndex();
     if (!isNumber() && furthestLeftPIndex != -1) largestParenthesisEquate();
     if (!isNumber()) equateAllCertainOperators('^');
-    if (!isNumber()) equateAllCertainOperators('*');
-    if (!isNumber()) equateAllCertainOperators('/');
-    if (!isNumber()) equateAllCertainOperators('+');
-    if (!isNumber()) equateAllCertainOperators('-');
+    if (!isNumber()) equateAllMultiplicationAndDivision();
+    if (!isNumber()) equateAllAdditionAndSubtraction();
     return stod(equation);
 }

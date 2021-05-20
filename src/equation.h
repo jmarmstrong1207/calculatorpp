@@ -34,6 +34,14 @@ private:
     double determineTrigFxnAndEquate(std::string trigFxn, double num);
 
     void equateFirstTrig();
+    
+    void findFirstMDOperator(int[2]);
+
+    void findFirstADOperator(int[2]);
+
+    void equateAllMultiplicationAndDivision();
+
+    void equateAllAdditionAndSubtraction();
 
 public:
 
